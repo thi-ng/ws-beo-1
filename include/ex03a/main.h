@@ -31,4 +31,5 @@ typedef struct {
 	float freq;
 	float modPhase;
 	float modAmp;
+	uint8_t type;
 } Oscillator;

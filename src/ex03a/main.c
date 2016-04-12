@@ -1,6 +1,6 @@
 #include <math.h>
 #include "ex03a/main.h"
-#include "gui/bt_blackangle48_12.h"
+#include "gui/bt_blackangle64_16.h"
 #include "macros.h"
 
 static void touchScreenError();
@@ -9,46 +9,46 @@ static void drawGUI();
 static void updateAudioBuffer();
 
 const float ct_synth_notes[] = {
-    // c1
-    32.70319566f, 34.64782887f, 36.70809599f, 38.89087297f, 41.20344461f,
-    43.65352893f, 46.24930284f, 48.99942950f, 51.91308720f, 55.00000000f,
-    58.27047019f, 61.73541266f,
-    // c2
-    65.40639133f, 69.29565774f, 73.41619198f, 77.78174593f, 82.40688923f,
-    87.30705786f, 92.49860568f, 97.99885900f, 103.82617439f, 110.00000000f,
-    116.54094038f, 123.47082531f,
-    // c3
-    130.81278265f, 138.59131549f, 146.83238396f, 155.56349186f, 164.81377846f,
-    174.61411572f, 184.99721136f, 195.99771799f, 207.65234879f, 220.00000000f,
-    233.08188076f, 246.94165063f,
-    // c4
-    261.62556530f, 277.18263098f, 293.66476792f, 311.12698372f, 329.62755691f,
-    349.22823143f, 369.99442271f, 391.99543598f, 415.30469758f, 440.00000000f,
-    466.16376152f, 493.88330126f,
-    // c5
-    523.25113060f, 554.36526195f, 587.32953583f, 622.25396744f, 659.25511383f,
-    698.45646287f, 739.98884542f, 783.99087196f, 830.60939516f, 880.00000000f,
-    932.32752304f, 987.76660251f,
-    // c6
-    1046.50226120f, 1108.73052391f, 1174.65907167f, 1244.50793489f,
-    1318.51022765f, 1396.91292573f, 1479.97769085f, 1567.98174393f,
-    1661.21879032f, 1760.00000000f, 1864.65504607f, 1975.53320502f,
-    // c7
-    2093.00452240f, 2217.46104781f, 2349.31814334f, 2489.01586978,
-    2637.02045530f, 2793.82585146f, 2959.95538169f, 3135.96348785,
-    3322.43758064f, 3520.00000000f, 3729.31009214f, 3951.06641005,
-    // c8
-    4186.00904481f, 4434.92209563f, 4698.63628668f, 4978.03173955f,
-    5274.04091061f, 5587.65170293f, 5919.91076339f, 6271.92697571f,
-    6644.87516128f, 7040.00000000f, 7458.62018429f, 7902.13282010f};
+		// c1
+		32.70319566f, 34.64782887f, 36.70809599f, 38.89087297f, 41.20344461f,
+		43.65352893f, 46.24930284f, 48.99942950f, 51.91308720f, 55.00000000f,
+		58.27047019f, 61.73541266f,
+		// c2
+		65.40639133f, 69.29565774f, 73.41619198f, 77.78174593f, 82.40688923f,
+		87.30705786f, 92.49860568f, 97.99885900f, 103.82617439f, 110.00000000f,
+		116.54094038f, 123.47082531f,
+		// c3
+		130.81278265f, 138.59131549f, 146.83238396f, 155.56349186f,
+		164.81377846f, 174.61411572f, 184.99721136f, 195.99771799f,
+		207.65234879f, 220.00000000f, 233.08188076f, 246.94165063f,
+		// c4
+		261.62556530f, 277.18263098f, 293.66476792f, 311.12698372f,
+		329.62755691f, 349.22823143f, 369.99442271f, 391.99543598f,
+		415.30469758f, 440.00000000f, 466.16376152f, 493.88330126f,
+		// c5
+		523.25113060f, 554.36526195f, 587.32953583f, 622.25396744f,
+		659.25511383f, 698.45646287f, 739.98884542f, 783.99087196f,
+		830.60939516f, 880.00000000f, 932.32752304f, 987.76660251f,
+		// c6
+		1046.50226120f, 1108.73052391f, 1174.65907167f, 1244.50793489f,
+		1318.51022765f, 1396.91292573f, 1479.97769085f, 1567.98174393f,
+		1661.21879032f, 1760.00000000f, 1864.65504607f, 1975.53320502f,
+		// c7
+		2093.00452240f, 2217.46104781f, 2349.31814334f, 2489.01586978,
+		2637.02045530f, 2793.82585146f, 2959.95538169f, 3135.96348785,
+		3322.43758064f, 3520.00000000f, 3729.31009214f, 3951.06641005,
+		// c8
+		4186.00904481f, 4434.92209563f, 4698.63628668f, 4978.03173955f,
+		5274.04091061f, 5587.65170293f, 5919.91076339f, 6271.92697571f,
+		6644.87516128f, 7040.00000000f, 7458.62018429f, 7902.13282010f };
 
 TIM_HandleTypeDef TimHandle;
 
 static TS_StateTypeDef rawTouchState;
 static GUITouchState touchState;
 
-static SpriteSheet dialSheet = { .pixels = bt_blackangle48_12_argb8888,
-		.spriteWidth = 48, .spriteHeight = 48, .numSprites = 12, .format =
+static SpriteSheet dialSheet = { .pixels = bt_blackangle64_16_argb8888,
+		.spriteWidth = 64, .spriteHeight = 64, .numSprites = 16, .format =
 		CM_ARGB8888 };
 
 static GUI *gui;
@@ -57,7 +57,7 @@ static __IO DMABufferState bufferState = BUFFER_OFFSET_NONE;
 static uint8_t audioBuf[AUDIO_DMA_BUFFER_SIZE];
 
 static Oscillator osc = { .phase = 0.0f, .freq = HZ_TO_RAD(22050.0f),
-		.modPhase = 0.0f, .modAmp = 4.0f };
+		.modPhase = 0.0f, .modAmp = 4.0f, .type = 0 };
 
 int main() {
 	CPU_CACHE_Enable();
@@ -119,7 +119,7 @@ static void setVolume(GUIElement *e) {
 static void setOscFreq(GUIElement *e) {
 	DialButtonState *db = (DialButtonState *) (e->userData);
 	//osc.freq = HZ_TO_RAD(mix(50.f, 1760.f, db->value));
-	osc.freq = HZ_TO_RAD(ct_synth_notes[(uint8_t)(db->value * 48.f)]);
+	osc.freq = HZ_TO_RAD(ct_synth_notes[(uint8_t )(db->value * 48.f)]);
 }
 
 static void setModAmp(GUIElement *e) {
@@ -127,14 +127,22 @@ static void setModAmp(GUIElement *e) {
 	osc.modAmp = mix(-16.0f, 16.0, db->value);
 }
 
+static void setOscType(GUIElement *e) {
+	DialButtonState *db = (DialButtonState *) (e->userData);
+	osc.type = (uint8_t) (db->value * 5);
+	//db->value = osc.type * 0.2;
+}
+
 static void initAppGUI() {
-	gui = initGUI(3, &UI_FONT, LCD_COLOR_BLACK, LCD_COLOR_LIGHTGRAY);
+	gui = initGUI(4, &UI_FONT, LCD_COLOR_BLACK, LCD_COLOR_LIGHTGRAY);
 	gui->items[0] = guiDialButton(0, "Volume", 10, 10, (float) VOLUME / 100.0f,
 			0.025f, &dialSheet, setVolume);
 	gui->items[1] = guiDialButton(1, "Freq", 80, 10, osc.freq / 5000.0f, 0.025f,
 			&dialSheet, setOscFreq);
 	gui->items[2] = guiDialButton(2, "Mod Amp", 150, 10, 0.0f, 0.025f,
 			&dialSheet, setModAmp);
+	gui->items[3] = guiDialButton(2, "Type", 220, 10, 0.0f, 0.025f, &dialSheet,
+			setOscType);
 }
 
 static void drawGUI() {
@@ -179,15 +187,31 @@ static void renderAudio(int16_t *ptr) {
 			osc.modPhase -= TAU;
 		}
 		float m = osc.modAmp * cosf(osc.modPhase);
-		//float y = sinf(osc.phase + m);
-		//float y = mapValue(osc.phase + m, 0.0f, TAU, -1.f, 1.f);
-		//float y = (osc.phase + m) < PI ? -1.0f : 1.0f;
 		float y;
-		if (osc.phase + m < PI) {
-			y = mapValue(osc.phase + m, 0.0f, PI, -1.f, 1.f);
-		} else {
-			//y = mapValue(osc.phase + m, PI, TAU, 1.f, -1.f);
+		switch (osc.type) {
+		case 0: // sin
 			y = sinf(osc.phase + m);
+			break;
+		case 1: // saw
+			y = mapValue(osc.phase + m, 0.0f, TAU, -1.f, 1.f);
+			break;
+		case 2: // square
+			y = (osc.phase + m) < PI ? -1.0f : 1.0f;
+			break;
+		case 3: // triangle
+			if (osc.phase + m < PI) {
+				y = mapValue(osc.phase + m, 0.0f, PI, -1.f, 1.f);
+			} else {
+				y = mapValue(osc.phase + m, PI, TAU, 1.f, -1.f);
+			}
+			break;
+		case 4: // tri + sin
+		default:
+			if (osc.phase + m < PI) {
+				y = mapValue(osc.phase + m, 0.0f, PI, -1.f, 1.f);
+			} else {
+				y = sinf(osc.phase + m);
+			}
 		}
 		int16_t yi = ct_clamp16((int32_t) (y * 32767));
 		//int16_t yi = (int16_t) (y * 32767);
