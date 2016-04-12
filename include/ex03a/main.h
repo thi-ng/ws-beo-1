@@ -29,4 +29,6 @@ typedef enum {
 typedef struct {
 	float phase;
 	float freq;
+	float modPhase;
+	float modAmp;
 } Oscillator;

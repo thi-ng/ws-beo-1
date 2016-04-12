@@ -22,7 +22,8 @@ static GUI *gui;
 static __IO DMABufferState bufferState = BUFFER_OFFSET_NONE;
 static uint8_t audioBuf[AUDIO_DMA_BUFFER_SIZE];
 
-static Oscillator osc = { .phase = 0.0f, .freq = HZ_TO_RAD(220.0f) };
+static Oscillator osc = { .phase = 0.0f, .freq = HZ_TO_RAD(22050.0f),
+		.modPhase = 0.0f, .modAmp = 4.0f };
 
 int main() {
 	CPU_CACHE_Enable();
@@ -68,6 +69,14 @@ static void touchScreenError() {
 	}
 }
 
+static float mix(float a, float b, float t) {
+	return a + (b - a) * t;
+}
+
+static float mapValue(float x, float a, float b, float c, float d) {
+	return mix(c, d, (x - a) / (b - a));
+}
+
 static void setVolume(GUIElement *e) {
 	DialButtonState *db = (DialButtonState *) (e->userData);
 	BSP_AUDIO_OUT_SetVolume((uint8_t) (db->value * 100));
@@ -75,15 +84,22 @@ static void setVolume(GUIElement *e) {
 
 static void setOscFreq(GUIElement *e) {
 	DialButtonState *db = (DialButtonState *) (e->userData);
-	osc.freq = HZ_TO_RAD(50.0f + db->value * 4950.0f);
+	osc.freq = HZ_TO_RAD(mix(50.f, 5000.f, db->value));
+}
+
+static void setModAmp(GUIElement *e) {
+	DialButtonState *db = (DialButtonState *) (e->userData);
+	osc.modAmp = mix(-16.0f, 16.0, db->value);
 }
 
 static void initAppGUI() {
-	gui = initGUI(2, &UI_FONT, LCD_COLOR_BLACK, LCD_COLOR_LIGHTGRAY);
+	gui = initGUI(3, &UI_FONT, LCD_COLOR_BLACK, LCD_COLOR_LIGHTGRAY);
 	gui->items[0] = guiDialButton(0, "Volume", 10, 10, (float) VOLUME / 100.0f,
 			0.025f, &dialSheet, setVolume);
-	gui->items[1] = guiDialButton(1, "Freq", 80, 10,
-			osc.freq / 5000.0f, 0.025f, &dialSheet, setOscFreq);
+	gui->items[1] = guiDialButton(1, "Freq", 80, 10, osc.freq / 5000.0f, 0.025f,
+			&dialSheet, setOscFreq);
+	gui->items[2] = guiDialButton(2, "Mod Amp", 150, 10, 0.0f, 0.025f,
+			&dialSheet, setModAmp);
 }
 
 static void drawGUI() {
@@ -123,8 +139,14 @@ static void renderAudio(int16_t *ptr) {
 		if (osc.phase >= TAU) {
 			osc.phase -= TAU;
 		}
-		float y = sinf(osc.phase);
-		int16_t yi = ct_clamp16((int32_t) (y * 0x7fff));
+		osc.modPhase += HZ_TO_RAD(100.0f);
+		if (osc.modPhase >= TAU) {
+			osc.modPhase -= TAU;
+		}
+		float m = osc.modAmp * cosf(osc.modPhase);
+		float y = sinf(osc.phase + m);
+
+		int16_t yi = ct_clamp16((int32_t) (y * 32767));
 		*ptr++ = yi;
 		*ptr++ = yi;
 	}
